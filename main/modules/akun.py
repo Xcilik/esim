@@ -103,19 +103,13 @@ async def tools(client, callback_query):
         except Exception as error:
             return await callback_query.answer(error, True)
 
-
-
-@app.on_message(filters.command("setting") & filters.private)
-async def setting(client, message):
+@app.on_message(filters.command("cek") & filters.private)
+async def cek(client, message):
     text = f"""
-
-    
+<b>Akun Ke</b> <code>{0 + 1}/{len(akun._akun)}</code>
+<b>Name:</b> <a href=tg://user?id={ubot._ubot[0].me.id}>{akun._akun[0].me.first_name} {akun._akun[0].me.last_name or ''}</a> 
+<b>Id:</b> <code>{akun._akun[0].me.id}</code>
 """    
-    button = [
-        [
-            InlineKeyboardButton("Tambah Akun", callback_data="add_akun"),
-        ],
-        [
-           InlineKeyboardButton("", callback_data="setting"),
-        ],
-    ]
+    await app.send_message(message.chat.id, text
+        reply_markup=InlineKeyboardMarkup(Button.user_akun(akun._akun[0].me.id, 0)),
+    )
