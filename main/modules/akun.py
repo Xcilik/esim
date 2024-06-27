@@ -107,7 +107,7 @@ async def tools(client, callback_query):
 async def cek(client, message):
     text = f"""
 <b>Akun Ke</b> <code>{0 + 1}/{len(akun._akun)}</code>
-<b>Name:</b> <a href=tg://user?id={ubot._ubot[0].me.id}>{akun._akun[0].me.first_name} {akun._akun[0].me.last_name or ''}</a> 
+<b>Name:</b> <a href=tg://user?id={akun._akun[0].me.id}>{akun._akun[0].me.first_name} {akun._akun[0].me.last_name or ''}</a> 
 <b>Id:</b> <code>{akun._akun[0].me.id}</code>
 """    
     await app.send_message(message.chat.id, text,
