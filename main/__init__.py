@@ -59,7 +59,7 @@ class Akun(TelegramClient):
     _get_my_id = []
 
     def __init__(self, **kwargs):
-        super().__init__(**kwargs, device_model="Telegram")
+        super().__init__(**kwargs)
 
   
     async def start(self):
