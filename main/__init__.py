@@ -54,7 +54,7 @@ console = logging.getLogger(__name__)
         console.info(f"Starting Akun {self.me.id}|{self.me.first_name}")
 """
 
-akun = [memek, kontol]
+akun = ["memek", "kontol"]
 app = Client(
     name="akun",
     api_id=API_ID,
