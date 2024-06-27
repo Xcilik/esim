@@ -9,7 +9,7 @@ from importlib import import_module
 from main.database import get_all_akun, remove_akun
 from main.modules import loadModule
 
-from pyrogram.types improt RPCError
+from pyrogram.types import RPCError
 from pyrogram import idle
 from pytz import timezone
 
