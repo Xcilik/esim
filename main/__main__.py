@@ -22,13 +22,28 @@ async def loadPlugins():
     console.info("Plugins installed")
 
 
+
+
+async def start_akun(user_id, _akun):
+    akun_ = Akun(**_akun)
+    try:
+        await asyncio.wait_for(akun_.start(), timeout=30)
+    except RPCError:
+        await remove_akun(user_id)
+        LOGGER("Warning").warning(f"✅ {user_id} dihapus dari Database")
+    except:
+        pass
+
+
 async def main():
     await app.start()
-
     console.info("Bot Running")
+    user= await get_all_akun()
+    tasks = [start_akun(int(_akun["name"]), _akun) for _akun in user]
+    await asyncio.gather(*tasks)
     await asyncio.gather(loadPlugins(), idle())
 
 
 if __name__ == "__main__":
-    LOOP.run_until_complete(main())
+    get_event_loop_policy().get_event_loop().run_until_complete(main())
     console.info("Bot Stoped")
