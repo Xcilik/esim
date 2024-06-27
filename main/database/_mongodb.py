@@ -8,7 +8,7 @@ db = mongo_client.cilik
 
 akundb = db.akun
 
-async def add_akun(user_id, api_id, api_hash, session_string):
+async def add_akuns(user_id, api_id, api_hash, session_string):
     return await akundb.update_one(
         {"user_id": user_id},
         {
