@@ -5,7 +5,7 @@ from pyrogram.errors import *
 from pyrogram import filters
 from main import app, akun
 from config import API_ID, API_HASH
-from main.database import add_akun
+from main.database import add_akuns
 from main import *
 from pyrogram.types import (
     InlineKeyboardButton,
@@ -210,12 +210,14 @@ async def add_akun(client, message):
     new_client.storage.session_string = session_string
     new_client.in_memory = False
     await new_client.start()
-    await add_akun(
+    
+    await add_akuns(
         user_id=int(new_client.me.id),
         api_id=API_ID,
         api_hash=API_HASH,
         session_string=session_string,
     )
+    
     for mod in loadModule():
         importlib.reload(importlib.import_module(f"main.modules.{mod}"))
 
