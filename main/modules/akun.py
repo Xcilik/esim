@@ -1,6 +1,13 @@
 from pyrogram import filters
 from main import app, akun
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from pyrogram.types import (
+    InlineKeyboardButton,
+    InlineKeyboardMarkup,
+    KeyboardButton,
+    ReplyKeyboardMarkup,
+    ReplyKeyboardRemove,
+)
+
 
 
 class Button:
@@ -102,6 +109,115 @@ async def tools(client, callback_query):
             )
         except Exception as error:
             return await callback_query.answer(error, True)
+
+
+
+@app.on_message(filters.command("add") & filters.private)
+async def add_akun(client, message):
+    user_id = message.from_user.id
+    try:
+        contact_button = KeyboardButton("Kirim Nomor", request_contact=True)
+        reply_markup = ReplyKeyboardMarkup([[contact_button]], resize_keyboard=True)
+        phone = await client.ask(
+            user_id,
+            ("Silakan kirim nomor telepon Anda dengan mengklik tombol di bawah ini.")),
+            reply_markup=reply_markup,
+            timeout=300,
+        )
+    except TimeoutError:
+        return await client.send_message(user_id, "Waktu telah habis")
+    phone_number = phone.contact.phone_number
+    new_client = Akun(
+        name=str(message.id),
+        api_id=API_ID,
+        api_hash=API_HASH,
+        in_memory=False,
+    )
+    get_otp = await client.send_message(
+        user_id, "<i>Mengirim kode OTP...</i>", reply_markup=ReplyKeyboardRemove()
+    )
+    await new_client.connect()
+    try:
+        code = await new_client.send_code(phone_number)
+    except FloodWait as FW:
+        await get_otp.delete()
+        return await client.send_message(user_id, FW)
+    except ApiIdInvalid as AII:
+        await get_otp.delete()
+        return await client.send_message(user_id, AII)
+    except PhoneNumberInvalid as PNI:
+        await get_otp.delete()
+        return await client.send_message(user_id, PNI)
+    except PhoneNumberFlood as PNF:
+        await get_otp.delete()
+        return await client.send_message(user_id, PNF)
+    except PhoneNumberBanned as PNB:
+        await get_otp.delete()
+        return await client.send_message(user_id, PNB)
+    except PhoneNumberUnoccupied as PNU:
+        await get_otp.delete()
+        return await client.send_message(user_id, PNU)
+    except Exception as error:
+        await get_otp.delete()
+        return await client.send_message(user_id, f"<b>ERROR:</b> {error}")
+    try:
+        await get_otp.delete()
+        otp = await client.ask(
+            user_id,
+            (
+                "OTP telah dikirim melalui aplikasi <a href=tg://openmessage?user_id=777000>Telegram</a>, Silakan masukkan OTP dalam format <code>1 2 3 4 5</code>.  <i>(Spasi di antara setiap angka!)</i>"
+            ),
+            timeout=300,
+        )
+    except TimeoutError:
+        return await client.send_message(user_id, "Waktu telah habis")
+    otp_code = otp.text
+    try:
+        await new_client.sign_in(
+            phone_number.strip(),
+            code.phone_code_hash,
+            phone_code=" ".join(str(otp_code)),
+        )
+    except PhoneCodeInvalid as PCI:
+        return await client.send_message(user_id, PCI)
+    except PhoneCodeExpired as PCE:
+        return await client.send_message(user_id, PCE)
+    except BadRequest as error:
+        return await client.send_message(user_id, f"<b>ERROR:</b> {error}")
+    except SessionPasswordNeeded:
+        try:
+            two_step_code = await client.ask(
+                user_id,
+                "Akun Anda mengaktifkan verifikasi dua langkah.\nSilahkan masukkan kata sandi Anda.",
+                timeout=300,
+            )
+        except TimeoutError:
+            return await client.send_message(user_id, "Batas waktu tercapai 5 menit.")
+        new_code = two_step_code.text
+        try:
+            await new_client.check_password(new_code)
+        except Exception as error:
+            return await client.send_message(user_id, f"<b>Error:</b> {error}")
+    session_string = await new_client.export_session_string()
+    await new_client.disconnect()
+    new_client.storage.session_string = session_string
+    new_client.in_memory = False
+    await new_client.start()
+    await add_akun(
+        user_id=int(new_client.me.id),
+        api_id=API_ID,
+        api_hash=API_HASH,
+        session_string=session_string,
+    )
+    for mod in loadModule():
+        importlib.reload(importlib.import_module(f"main.modules.{mod}"))
+
+    await client.send_message(
+        user_id,
+        "Done!",
+    )
+
+
 
 @app.on_message(filters.command("cek") & filters.private)
 async def cek(client, message):
