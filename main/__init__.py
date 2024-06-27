@@ -35,31 +35,29 @@ logging.getLogger("pyrogram.session.session").setLevel(logging.WARNING)
 
 console = logging.getLogger(__name__)
 
-class Bot(Client):
-    def __init__(self):
-        console.info(f"Starting Bot")
-        super().__init__(
-            "nokos",
-            api_id=API_ID,
-            api_hash=API_HASH,
-            bot_token=BOT_TOKEN,
-        )
+class Akun(Client):
+    __module__ = "pyrogram.client"
+    _akun = []
+    _get_my_id = []
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs, device_model="Telegram")
+
+  
     async def start(self):
         await super().start()
-        get_me = await self.get_me()
-        self.username = get_me.username
-        self.id = get_me.id
-        await self.send_message(
-                "greyvbss", "Bot nokos Started"
-            )
-        if get_me.last_name:
-            self.name = get_me.first_name + " " + get_me.last_name
-        else:
-            self.name = get_me.first_name
-        console.info(f"Bot Started as {self.name}")
+        self._akun.append(self)
+        self._get_my_id.append(self.me.id)
+        console.info(f"Starting Akun {self.me.id}|{self.me.first_name}")
 
 
 
+akun = Akun(name="akun")
 
-app = Bot()
+app = Client(
+    name="akun",
+    api_id=API_ID,
+    api_hash=API_HASH,
+    bot_token=BOT_TOKEN,
+)
+
