@@ -181,7 +181,7 @@ async def add_akun(client, message):
         await new_client.sign_in(
             phone_number.strip(),
             phone_code=" ".join(str(otp_code)),
-            password=none
+            password=None
         )
 
     except SessionPasswordNeededError:
