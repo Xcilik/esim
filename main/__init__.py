@@ -58,12 +58,9 @@ class Akun(TelegramClient):
     _akun = []
     _get_my_id = []
 
-    def __init__(self, **args):
-        super().__init__(**args)
 
   
     async def start(self):
-        await super().start()
         self._akun.append(self)
         self._get_my_id.append(self.me.id)
         console.info(f"Starting Akun {self.me.id}|{self.me.first_name}")
