@@ -195,9 +195,8 @@ async def add_akun(client, message):
             )
         except TimeoutError:
             return await client.send_message(user_id, "Batas waktu tercapai 5 menit.")
-        new_code = two_step_code.text
         try:
-            await new_client.sign_in(password=two_step_code)
+            await new_client.sign_in(password=two_step_code.text)
         except Exception as error:
             return await client.send_message(user_id, f"<b>Error:</b> {error}")
     session_string = new_client.session.save()
