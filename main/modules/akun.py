@@ -16,7 +16,15 @@ from pyrogram.types import (
     ReplyKeyboardMarkup,
     ReplyKeyboardRemove,
 )
-
+from telethon.sessions import StringSession
+from telethon.errors import (
+    ApiIdInvalidError,
+    PhoneNumberInvalidError,
+    PhoneCodeInvalidError,
+    PhoneCodeExpiredError,
+    SessionPasswordNeededError,
+    PasswordHashInvalidError
+)
 
 
 class Button:
@@ -68,7 +76,7 @@ async def next_prev_akun(client, callback_query):
             
     await callback_query.edit_message_text(f"""
 <b>Akun Ke</b> <code>{int(count) + 1}/{len(akun._akun)}</code>
-<b>Name:</b> <a href=tg://user?id={ubot._ubot[int(count)].me.id}>{akun._akun[int(count)].me.first_name} {akun._akun[int(count)].me.last_name or ''}</a> 
+<b>Name:</b> <a href=tg://user?id={akun._akun[int(count)].me.id}>{akun._akun[int(count)].me.first_name} {akun._akun[int(count)].me.last_name or ''}</a> 
 <b>Id:</b> <code>{akun._akun[int(count)].me.id}</code>
 """,
         reply_markup=InlineKeyboardMarkup(
@@ -137,35 +145,22 @@ async def add_akun(client, message):
         return await client.send_message(user_id, "Waktu telah habis")
     phone_number = phone.contact.phone_number
     new_client = Akun(
-        name=str(message.id),
+        StringSession(),
         api_id=API_ID,
         api_hash=API_HASH,
-        in_memory=False,
     )
     get_otp = await client.send_message(
         user_id, "<i>Mengirim kode OTP...</i>", reply_markup=ReplyKeyboardRemove()
     )
     await new_client.connect()
     try:
-        code = await new_client.send_code(phone_number)
-    except FloodWait as FW:
-        await get_otp.delete()
-        return await client.send_message(user_id, FW)
-    except ApiIdInvalid as AII:
+        code = await new_client.send_code_request(phone_number)
+    except ApiIdInvalidError as AII:
         await get_otp.delete()
         return await client.send_message(user_id, AII)
-    except PhoneNumberInvalid as PNI:
+    except PhoneNumberInvalidError as PNI:
         await get_otp.delete()
         return await client.send_message(user_id, PNI)
-    except PhoneNumberFlood as PNF:
-        await get_otp.delete()
-        return await client.send_message(user_id, PNF)
-    except PhoneNumberBanned as PNB:
-        await get_otp.delete()
-        return await client.send_message(user_id, PNB)
-    except PhoneNumberUnoccupied as PNU:
-        await get_otp.delete()
-        return await client.send_message(user_id, PNU)
     except Exception as error:
         await get_otp.delete()
         return await client.send_message(user_id, f"<b>ERROR:</b> {error}")
@@ -184,16 +179,11 @@ async def add_akun(client, message):
     try:
         await new_client.sign_in(
             phone_number.strip(),
-            code.phone_code_hash,
             phone_code=" ".join(str(otp_code)),
+            password=none
         )
-    except PhoneCodeInvalid as PCI:
-        return await client.send_message(user_id, PCI)
-    except PhoneCodeExpired as PCE:
-        return await client.send_message(user_id, PCE)
-    except BadRequest as error:
-        return await client.send_message(user_id, f"<b>ERROR:</b> {error}")
-    except SessionPasswordNeeded:
+
+    except SessionPasswordNeededError:
         try:
             two_step_code = await client.ask(
                 user_id,
@@ -204,13 +194,11 @@ async def add_akun(client, message):
             return await client.send_message(user_id, "Batas waktu tercapai 5 menit.")
         new_code = two_step_code.text
         try:
-            await new_client.check_password(new_code)
+            await new_client.sign_in(password=two_step_code)
         except Exception as error:
             return await client.send_message(user_id, f"<b>Error:</b> {error}")
-    session_string = await new_client.export_session_string()
-    await new_client.disconnect()
-    new_client.storage.session_string = session_string
-    new_client.in_memory = False
+    session_string = new_client.session.save()
+
     await new_client.start()
     
     await add_akuns(
@@ -225,7 +213,7 @@ async def add_akun(client, message):
 
     await client.send_message(
         user_id,
-        "Done!",
+        f"Done! {session_string}",
     )
 
 
