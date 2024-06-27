@@ -1,4 +1,6 @@
 import asyncio
+from asyncio import get_event_loop_policy
+
 import sys
 from atexit import register
 from datetime import datetime, timedelta
