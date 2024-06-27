@@ -120,7 +120,7 @@ async def add_akun(client, message):
         reply_markup = ReplyKeyboardMarkup([[contact_button]], resize_keyboard=True)
         phone = await client.ask(
             user_id,
-            ("Silakan kirim nomor telepon Anda dengan mengklik tombol di bawah ini.")),
+            ("Silakan kirim nomor telepon Anda dengan mengklik tombol di bawah ini."),
             reply_markup=reply_markup,
             timeout=300,
         )
