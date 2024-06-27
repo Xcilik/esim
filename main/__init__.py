@@ -4,6 +4,8 @@ import re
 import subprocess
 import sys
 from typing import Callable
+from telethon.sync import TelegramClient
+
 
 import pyrogram
 from aiofiles.os import remove as aremove
@@ -30,12 +32,13 @@ logging.basicConfig(
 
 logging.getLogger("asyncio").setLevel(logging.ERROR)
 logging.getLogger("pyrogram").setLevel(logging.ERROR)
+logging.getLogger("telethon").setLevel(logging.ERROR)
 logging.getLogger("pyrogram.session.session").setLevel(logging.WARNING)
 
 
 console = logging.getLogger(__name__)
 
-class Akun(Client):
+"""class Akun(Client):
     __module__ = "pyrogram.client"
     _akun = []
     _get_my_id = []
@@ -49,8 +52,21 @@ class Akun(Client):
         self._akun.append(self)
         self._get_my_id.append(self.me.id)
         console.info(f"Starting Akun {self.me.id}|{self.me.first_name}")
+"""
 
+class Akun(TelegramClient):
+    _akun = []
+    _get_my_id = []
 
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs, device_model="Telegram")
+
+  
+    async def start(self):
+        await super().start()
+        self._akun.append(self)
+        self._get_my_id.append(self.me.id)
+        console.info(f"Starting Akun {self.me.id}|{self.me.first_name}")
 
 akun = Akun(name="akun")
 
