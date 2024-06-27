@@ -203,16 +203,6 @@ async def add_akun(client, message):
 
     await new_client.start()
     
-    await add_akuns(
-        user_id=int(new_client.me.id),
-        api_id=API_ID,
-        api_hash=API_HASH,
-        session_string=session_string,
-    )
-    
-    for mod in loadModule():
-        importlib.reload(importlib.import_module(f"main.modules.{mod}"))
-
     await client.send_message(
         user_id,
         f"Done! {session_string}",
