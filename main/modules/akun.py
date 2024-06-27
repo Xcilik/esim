@@ -1,5 +1,7 @@
 from pyrogram import filters
 from main import app, akun
+from config import API_ID, API_HASH
+from main.database import add_akun
 from pyrogram.types import (
     InlineKeyboardButton,
     InlineKeyboardMarkup,
