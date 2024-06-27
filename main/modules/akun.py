@@ -3,6 +3,7 @@ from main.modules import loadModule
 from asyncio import TimeoutError
 
 from pyrogram.errors import *
+from telethon.sync import TelegramClient
 
 from pyrogram import filters
 from main import app, akun
@@ -144,7 +145,7 @@ async def add_akun(client, message):
     except TimeoutError:
         return await client.send_message(user_id, "Waktu telah habis")
     phone_number = phone.contact.phone_number
-    new_client = Akun(
+    new_client = TelegramClient(
         StringSession(),
         api_id=API_ID,
         api_hash=API_HASH,
