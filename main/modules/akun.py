@@ -1,3 +1,7 @@
+from asyncio import TimeoutError
+
+from pyrogram.errors import *
+
 from pyrogram import filters
 from main import app, akun
 from config import API_ID, API_HASH
