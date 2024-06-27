@@ -54,18 +54,6 @@ console = logging.getLogger(__name__)
         console.info(f"Starting Akun {self.me.id}|{self.me.first_name}")
 """
 
-class Akun(TelegramClient):
-    _akun = []
-    _get_my_id = []
-
-
-  
-    async def start(self):
-        self._akun.append(self)
-        self._get_my_id.append(self.me.id)
-        console.info(f"Starting Akun {self.me.id}|{self.me.first_name}")
-
-akun = Akun(name="akun")
 
 app = Client(
     name="akun",
