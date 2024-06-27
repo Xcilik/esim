@@ -42,9 +42,7 @@ async def start_akun(user_id, _akun):
 async def main():
     await app.start()
     console.info("Bot Running")
-    user= await get_all_akun()
-    tasks = [start_akun(int(_akun["name"]), _akun) for _akun in user]
-    await asyncio.gather(*tasks)
+
     await asyncio.gather(loadPlugins(), idle())
 
 
