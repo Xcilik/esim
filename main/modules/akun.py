@@ -105,11 +105,14 @@ async def tools(client, callback_query):
 
 @app.on_message(filters.command("cek") & filters.private)
 async def cek(client, message):
-    text = f"""
+    try:
+        text = f"""
 <b>Akun Ke</b> <code>{0 + 1}/{len(akun._akun)}</code>
 <b>Name:</b> <a href=tg://user?id={akun._akun[0].me.id}>{akun._akun[0].me.first_name} {akun._akun[0].me.last_name or ''}</a> 
 <b>Id:</b> <code>{akun._akun[0].me.id}</code>
 """    
-    await app.send_message(message.chat.id, text,
-        reply_markup=InlineKeyboardMarkup(Button.user_akun(akun._akun[0].me.id, 0)),
-    )
+        await app.send_message(message.chat.id, text,
+            reply_markup=InlineKeyboardMarkup(Button.user_akun(akun._akun[0].me.id, 0)),
+        )
+    except:
+        await app.send_message(message.chat.id, "Gada akun dek")
