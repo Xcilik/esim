@@ -180,7 +180,7 @@ async def add_akun(client, message):
     try:
         await new_client.sign_in(
             phone=phone_number.strip(),
-            code=phone_code=" ".join(str(otp_code)),
+            code=" ".join(str(otp_code)),
             password=None,
             bot_token=None,
             phone_code_hash=None
