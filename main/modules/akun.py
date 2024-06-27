@@ -1,3 +1,5 @@
+import importlib
+from main.modules import loadModule
 from asyncio import TimeoutError
 
 from pyrogram.errors import *
