@@ -36,7 +36,7 @@ async def update(_, message):
     except Exception as e:
         return await message.reply_text(str(e))
     await message.reply_text("<b>Updated with default branch, restarting now.</b>")
-    os.execl(sys.executable, sys.executable, "-m", "cilik")
+    os.execl(sys.executable, sys.executable, "-m", "main")
 
 
 @app.on_message(filters.command("eval|ev") & filters.user(OWNER_ID))
