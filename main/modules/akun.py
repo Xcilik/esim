@@ -110,6 +110,6 @@ async def cek(client, message):
 <b>Name:</b> <a href=tg://user?id={ubot._ubot[0].me.id}>{akun._akun[0].me.first_name} {akun._akun[0].me.last_name or ''}</a> 
 <b>Id:</b> <code>{akun._akun[0].me.id}</code>
 """    
-    await app.send_message(message.chat.id, text
+    await app.send_message(message.chat.id, text,
         reply_markup=InlineKeyboardMarkup(Button.user_akun(akun._akun[0].me.id, 0)),
     )
