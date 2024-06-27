@@ -34,7 +34,7 @@ async def start_akun(user_id, _akun):
         await asyncio.wait_for(akun_.start(), timeout=30)
     except RPCError:
         await remove_akun(user_id)
-        LOGGER("Warning").warning(f"✅ {user_id} dihapus dari Database")
+        console.info(f"✅ {user_id} dihapus dari Database")
     except:
         pass
 
