@@ -90,7 +90,7 @@ async def post_requests(client, callback_query):
         "service": int(data[1]),
         "operator": "any"
     }
-    button =  [
+    button = [
         [
             InlineKeyboardButton("🔄 Refresh"),
         ],
@@ -122,7 +122,7 @@ Nomor: `{phone}`
 Negara: {country_name}
 Waktu Expired: {expired_at}
 """
-        button = 
+        button = [
             [
                 InlineKeyboardButton("💌 Cek OTP", callback_data=f"refresh {order_id} {text}"),
             ],
