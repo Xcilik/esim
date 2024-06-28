@@ -147,7 +147,7 @@ async def atur(client, callback_query):
         text = f"Kode OTP: {json_data['data']['sms']}"
         button = [
             [
-               InlineKeyboardButton("💌 Cek OTP", callback_data=f"refresh {int(data[1]}"),
+               InlineKeyboardButton("💌 Cek OTP", callback_data=f"refresh {int(data[1])}"),
             ],
         ]
             
