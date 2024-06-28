@@ -90,19 +90,7 @@ async def post_requests(client, callback_query):
         "service": int(data[1]),
         "operator": "any"
     }
-    button = [
-        [
-            InlineKeyboardButton("🔄 Refresh"),
-        ],
-        [
-            InlineKeyboardButton("🔁 Ganti"),
-            InlineKeyboardButton("✅ Succes"),
-            InlineKeyboardButton("📩 Resend"),      
-        ],
-        [
-            InlineKeyboardButton("❌ Cancel"),
-        ],
-    ]
+
         
     try:
         response = requests.post(url, json=params)
@@ -124,7 +112,7 @@ Waktu Expired: {expired_at}
 """
         button = [
             [
-                InlineKeyboardButton("💌 Cek OTP", callback_data=f"refresh {order_id} {text}"),
+                InlineKeyboardButton("💌 Cek OTP", callback_data=f"refresh {order_id}"),
             ],
             [
                 InlineKeyboardButton("🔁 Ganti", callback_data=f"ganti {order_id} {int(data[1])} {int(data[2])}"),
@@ -155,6 +143,6 @@ async def atur(client, callback_query):
         await asyncio.sleep(5)
         response = requests.post(url, json=params)
         json_data = response.json()
-        text = data[2] + f"\n\nKode OTP: {json_data['data']['sms']}"
+        text = f"\n\nKode OTP: {json_data['data']['sms']}"
         await callback_query.edit_message_text(text)
     
