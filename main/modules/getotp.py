@@ -4,6 +4,8 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from main import app
 
 
+api_id = 394  
+api_key = "GACHAbQOhNNsWGz4PXVlVMiGNunQm7I9wB79b8Gkn3At2XsFfHGa2PKyUZQ7dGXG"  
 
 
 @app.on_message(filters.command("get") & filters.private)
@@ -79,9 +81,7 @@ async def post_requests(client, callback_query):
     data = callback_query.data.split()
     text = "Silahkan Tunggu"
     url = "https://litensi.id/api/sms/order"
-    
-    api_id = 394  
-    api_key = "GACHAbQOhNNsWGz4PXVlVMiGNunQm7I9wB79b8Gkn3At2XsFfHGa2PKyUZQ7dGXG"  
+
 
     params = {
         "api_id": api_id,
@@ -90,9 +90,71 @@ async def post_requests(client, callback_query):
         "service": int(data[1]),
         "operator": "any"
     }
+    button = 
+        [
+            InlineKeyboardButton("🔄 Refresh"),
+        ],
+        [
+            InlineKeyboardButton("🔁 Ganti"),
+            InlineKeyboardButton("✅ Succes"),
+            InlineKeyboardButton("📩 Resend"),      
+        ],
+        [
+            InlineKeyboardButton("❌ Cancel"),
+        ],
+    ]
+        
     try:
         response = requests.post(url, json=params)
-        data = response.json()
-        await callback_query.edit_message_text(text + f"\n\n{data}")
+        json_data = response.json()
+        
+        order_id = json_data['data']['order_id']
+        country_name = json_data['data']['country_name']
+        service_name = json_data['data']['service_name']
+        phone = json_data['data']['phone']
+        expired_at = json_data['data']['expired_at']
+        
+        text = f"""
+OTP {service_name}
+#{order_id}
+
+Nomor: `{phone}`
+Negara: {country_name}
+Waktu Expired: {expired_at}
+"""
+        button = 
+            [
+                InlineKeyboardButton("💌 Cek OTP", callback_data=f"refresh {order_id} {text}"),
+            ],
+            [
+                InlineKeyboardButton("🔁 Ganti", callback_data=f"ganti {order_id} {int(data[1])} {int(data[2])}"),
+                InlineKeyboardButton("✅ Succes", callback_data=f"succes {order_id}"),
+                InlineKeyboardButton("📩 Resend", callback_data=f"resend {order_id}"),    
+            ],
+            [
+                InlineKeyboardButton("❌ Cancel", callback_data=f"cancel {order_id}"),
+            ],
+        ]        
+        await callback_query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(button))
     except Exception as e:
         await callback_query.edit_message_text(f"rusak {str(e)}")
+
+
+@app.on_callback_query(filters.regex("refresh|cancel|resend|succes|ganti"))
+async def atur(client, callback_query):
+    data = callback_query.data.split()
+    if data[0] == "refresh":
+        
+        url = "https://litensi.id/api/sms/getstatus"
+        params = {
+            "api_id": api_id,
+            "api_key": api_key,
+            "order_id": int(data[1]),
+
+        }
+        await asyncio.sleep(5)
+        response = requests.post(url, json=params)
+        json_data = response.json()
+        text = data[2] + f"\n\nKode OTP: {json_data['data']['sms']}"
+        await callback_query.edit_message_text(text)
+    
