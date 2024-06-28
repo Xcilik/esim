@@ -1,4 +1,5 @@
 import requests
+import asyncio
 from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from main import app
@@ -143,6 +144,17 @@ async def atur(client, callback_query):
         await asyncio.sleep(5)
         response = requests.post(url, json=params)
         json_data = response.json()
-        text = f"\n\nKode OTP: {json_data['data']['sms']}"
+        text = f"Kode OTP: {json_data['data']['sms']}"
         await callback_query.edit_message_text(text)
-    
+    elif data[0] == "cancel":
+        url = "https://litensi.id/api/sms/setstatus"
+        params = {
+            "api_id": api_id,
+            "api_key": api_key,
+            "order_id": int(data[1]),
+            "status": "CANCELED"
+        }
+        response = requests.post(url, json=params)
+        json_data = response.json()
+        text = f"CANCEL\n\n{json_data}"
+        await callback_query.edit_message_text(text)        
