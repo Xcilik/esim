@@ -1,5 +1,7 @@
 from asyncio import TimeoutError
 
+import importlib
+from main.modules import loadModule
 from pyrogram.errors import *
 
 from pyrogram import filters
@@ -66,7 +68,7 @@ async def next_prev_akun(client, callback_query):
             
     await callback_query.edit_message_text(f"""
 <b>Akun Ke</b> <code>{int(count) + 1}/{len(akun._akun)}</code>
-<b>Name:</b> <a href=tg://user?id={ubot._ubot[int(count)].me.id}>{akun._akun[int(count)].me.first_name} {akun._akun[int(count)].me.last_name or ''}</a> 
+<b>Name:</b> <a href=tg://user?id={akun._akun[int(count)].me.id}>{akun._akun[int(count)].me.first_name} {akun._akun[int(count)].me.last_name or ''}</a> 
 <b>Id:</b> <code>{akun._akun[int(count)].me.id}</code>
 """,
         reply_markup=InlineKeyboardMarkup(
