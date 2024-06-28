@@ -71,7 +71,6 @@ async def buy_nokos(client, callback_query):
     ]
     await callback_query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(button))
         
-        
     
 
 
@@ -81,4 +80,19 @@ async def post_requests(client, callback_query):
     text = "Silahkan Tunggu"
     url = "https://litensi.id/api/sms/order"
     
-     
+    api_id = 394  
+    api_key = "GACHAbQOhNNsWGz4PXVlVMiGNunQm7I9wB79b8Gkn3At2XsFfHGa2PKyUZQ7dGXG"  
+
+    params = {
+        "api_id": api_id,
+        "api_key": api_key,
+        "country": int(data[2]),
+        "service": int(data[1]),
+        "operator": "any"
+    }
+    try:
+        response = requests.post(url, json=params)
+        data = response.json()
+        await callback_query.edit_message_text(text + f"\n\n{data}")
+    except Exception as e:
+        await callback_query.edit_message_text(f"rusak {str(e)}")
