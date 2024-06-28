@@ -145,7 +145,13 @@ async def atur(client, callback_query):
         response = requests.post(url, json=params)
         json_data = response.json()
         text = f"Kode OTP: {json_data['data']['sms']}"
-        await callback_query.edit_message_text(text)
+        button = [
+            [
+               InlineKeyboardButton("💌 Cek OTP", callback_data=f"refresh {int(data[1]}"),
+            ],
+        ]
+            
+        await callback_query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(button))
     elif data[0] == "cancel":
         url = "https://litensi.id/api/sms/setstatus"
         params = {
