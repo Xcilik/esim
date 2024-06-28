@@ -17,7 +17,7 @@ Silahkan pilih Kategori
     button = [
         [
             InlineKeyboardButton("Telegram", callback_data="buy_nokos telegram"),
-            InlineKeyboardButton("WhatsApp", callback_data="buy_nokosbwhatsapp"),
+            InlineKeyboardButton("WhatsApp", callback_data="buy_nokos whatsapp"),
         ],
         [
             InlineKeyboardButton("Instagram", callback_data="buy_nokos instagram"),
