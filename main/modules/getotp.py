@@ -90,7 +90,7 @@ async def post_requests(client, callback_query):
         "service": int(data[1]),
         "operator": "any"
     }
-    button = 
+    button =  [
         [
             InlineKeyboardButton("🔄 Refresh"),
         ],
