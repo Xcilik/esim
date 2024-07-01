@@ -83,7 +83,6 @@ async def post_requests(client, callback_query):
     text = "Silahkan Tunggu"
     url = "https://litensi.id/api/sms/order"
 
-
     params = {
         "api_id": api_id,
         "api_key": api_key,
@@ -92,10 +91,12 @@ async def post_requests(client, callback_query):
         "operator": "any"
     }
 
-        
     try:
         response = requests.post(url, json=params)
         json_data = response.json()
+        
+        if not json_data['success']:
+            raise Exception(json_data['data'])
         
         order_id = json_data['data']['order_id']
         country_name = json_data['data']['country_name']
@@ -126,7 +127,33 @@ Waktu Expired: {expired_at}
         ]        
         await callback_query.edit_message_text(text, reply_markup=InlineKeyboardMarkup(button))
     except Exception as e:
-        await callback_query.edit_message_text(f"rusak {str(e)}")
+        error_message = str(e)
+        if error_message in [
+            "API salah atau tidak aktif", 
+            "NO SERVICE", 
+            "QUEUE LIMIT", 
+            "NO BALANCE", 
+            "SERVER MAINTENANCE", 
+            "NO NUMBERS", 
+            "SERVER OFF"
+        ]:
+            try:
+                five_sim_response = await handle_five_sim_order(data[1], data[2])
+                # Format text for 5sim response
+                text = f"""
+OTP {five_sim_response['product']}
+#{five_sim_response['id']}
+
+Nomor: `{five_sim_response['phone']}`
+Negara: {five_sim_response['country']}
+Waktu Expired: {five_sim_response['expires']}
+"""
+                await callback_query.edit_message_text(text)
+            except Exception as five_sim_error:
+                await callback_query.edit_message_text(f"Error: {str(five_sim_error)}")
+        else:
+            await callback_query.edit_message_text(f"Error: {error_message}")
+
 
 
 @app.on_callback_query(filters.regex("refresh|cancel|resend|succes|ganti"))
