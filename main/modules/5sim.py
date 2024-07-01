@@ -1,7 +1,7 @@
 async def handle_five_sim_order(service_id, country_id):
-    country = 'country_id'  # Replace with actual mapping
+    country = 'russia'  # Replace with actual mapping
     operator = 'any'
-    product = 'telegram'  # Replace with actual mapping
+    product = 'amazon'  # Replace with actual mapping
     
     headers = {
         'Authorization': 'Bearer ' + five_sim_token,
@@ -10,4 +10,15 @@ async def handle_five_sim_order(service_id, country_id):
 
     url = f'https://5sim.net/v1/user/buy/activation/{country}/{operator}/{product}'
     response = requests.get(url, headers=headers)
-    return response.json()
+    
+    if response.status_code == 200:
+        json_data = response.json()
+        return {
+            "id": json_data.get("id"),
+            "phone": json_data.get("phone"),
+            "product": json_data.get("product"),
+            "expires": json_data.get("expires"),
+            "country": json_data.get("country")
+        }
+    else:
+        response.raise_for_status()
